@@ -18,8 +18,10 @@ object Main extends App {
 
   // only proceed if database is available and empty
   val wholeGraph = db.queryGraph("MATCH (n) RETURN n LIMIT 1")
-  if(wholeGraph.nonEmpty)
+  if(wholeGraph.nonEmpty) {
+    restService.system.shutdown()
     sys.error("Database is not empty.")
+  }
 
 
   db.query("CREATE (:ANIMAL {name:'snake'})-[:EATS]->(:ANIMAL {name:'dog'})")
@@ -61,4 +63,8 @@ object Main extends App {
   //TODO: print instead of assert
   assert(animals.columns == List("name", "eatcount"))
   assert(animals.rows.maxBy(_.apply("eatcount").asInstanceOf[LongPropertyValue].value).apply("name").asInstanceOf[StringPropertyValue] == "snake")
+
+
+  // shut down actor system
+  restService.system.shutdown()
 }
