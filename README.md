@@ -1,4 +1,4 @@
-# renesca-example
+# renesca example
 
 A simple example to demonstrate the features of the [renesca](https://github.com/renesca/renesca) library.
 
@@ -26,3 +26,8 @@ hippo	0
 
 hungriest: snake
 ```
+
+## License
+Licensed under the [Apache License, Version 2.0][Apache]
+
+[Apache]: http://www.apache.org/licenses/LICENSE-2.0
