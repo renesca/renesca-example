@@ -6,7 +6,7 @@ import renesca.parameter.implicits._
 
 case class Animal(node: Node) {
   val label = Label("ANIMAL")
-  def eats: Set[Food] = node.outRelations.
+  def eats(implicit graph: Graph): Set[Food] = node.outRelations.
     filter(_.relationType == Eats.relationType).map(_.endNode).
     filter(_.labels.contains(Food.label)).map(Food.wrap)
   def name: String = node.properties("name").asInstanceOf[StringPropertyValue]
@@ -24,7 +24,7 @@ object Animal {
 
 case class Food(node: Node) {
   val label = Label("FOOD")
-  def rev_eats: Set[Animal] = node.inRelations.
+  def rev_eats(implicit graph: Graph): Set[Animal] = node.inRelations.
     filter(_.relationType == Eats.relationType).map(_.startNode).
     filter(_.labels.contains(Animal.label)).map(Animal.wrap)
   def name: String = node.properties("name").asInstanceOf[StringPropertyValue]
