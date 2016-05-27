@@ -8,7 +8,7 @@ case class Animal(node: Node) {
   val label = Label("ANIMAL")
   def eats(implicit graph: Graph): Set[Food] = node.outRelations.
     filter(_.relationType == Eats.relationType).map(_.endNode).
-    filter(_.labels.contains(Food.label)).map(Food.wrap)
+    filter(_.labels.contains(Food.label)).map(Food.wrap).toSet
   def name: String = node.properties("name").asInstanceOf[StringPropertyValue]
 }
 
@@ -26,7 +26,7 @@ case class Food(node: Node) {
   val label = Label("FOOD")
   def rev_eats(implicit graph: Graph): Set[Animal] = node.inRelations.
     filter(_.relationType == Eats.relationType).map(_.startNode).
-    filter(_.labels.contains(Animal.label)).map(Animal.wrap)
+    filter(_.labels.contains(Animal.label)).map(Animal.wrap).toSet
   def name: String = node.properties("name").asInstanceOf[StringPropertyValue]
   def amount: Long = node.properties("amount").asInstanceOf[LongPropertyValue]
   def `amount_=`(newValue: Long) { node.properties.update("amount", newValue) }
