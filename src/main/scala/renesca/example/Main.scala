@@ -17,14 +17,12 @@ object Main extends App {
   // dependency injection
   db.restService = restService
 
-
   // only proceed if database is available and empty
   val wholeGraph = db.queryWholeGraph
-  if(wholeGraph.nonEmpty) {
+  if (wholeGraph.nonEmpty) {
     restService.actorSystem.shutdown()
     sys.error("Database is not empty.")
   }
-
 
   // create example graph:  snake -eats-> dog
   db.query("CREATE (:ANIMAL {name:'snake'})-[:EATS]->(:ANIMAL {name:'dog'})")
@@ -67,15 +65,18 @@ object Main extends App {
   // different transaction syntax
   db.transaction { tx =>
     val hippo = tx.queryGraph(
-      Query( """MATCH (n:ANIMAL {name: {name}}) return n""",
-        Map("name" -> "hippo")) // Cypher query parameters
+      Query(
+        """MATCH (n:ANIMAL {name: {name}}) return n""",
+        Map("name" -> "hippo")
+      ) // Cypher query parameters
     ).nodes.head
     hippo.properties("nose") = true
+    tx.persistChanges(hippo)
   }
 
   db.transaction { tx =>
     // delete hippo
-    tx.query( """MATCH (n:ANIMAL {name: "hippo"}) OPTIONAL MATCH (n)-[r]-() DELETE n,r""")
+    tx.query("""MATCH (n:ANIMAL {name: "hippo"}) OPTIONAL MATCH (n)-[r]-() DELETE n,r""")
 
     // roll back deletion
     tx.rollback()
@@ -86,7 +87,7 @@ object Main extends App {
     RETURN n.name as name, COUNT(r) as eatcount""")
 
   println("\n" + animals.columns.mkString("\t")) // prints "name eatcount"
-  for(row <- animals.rows) {
+  for (row <- animals.rows) {
     print(row.cells(0).asInstanceOf[StringPropertyValue].value)
     print("\t")
     println(row.cells(1).asInstanceOf[LongPropertyValue].value)
@@ -101,7 +102,6 @@ object Main extends App {
     asInstanceOf[LongPropertyValue].value).
     apply("name").asInstanceOf[StringPropertyValue].value
   println("hungriest: " + hungriest) // prints "snake"
-
 
   // clear database
   db.query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r")

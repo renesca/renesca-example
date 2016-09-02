@@ -54,5 +54,3 @@ object Eats {
     wrap(Relation.create(startNode.node, relationType, endNode.node))
   }
 }
-
-
