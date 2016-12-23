@@ -18,8 +18,8 @@ object Main extends App {
   db.restService = restService
 
   // only proceed if database is available and empty
-  val wholeGraph = db.queryWholeGraph
-  if (wholeGraph.nonEmpty) {
+  val existingGraph = db.queryGraph("match (n) optional match (n)-[r]-() return n,r limit 1")
+  if(existingGraph.nonEmpty) {
     restService.actorSystem.shutdown()
     sys.error("Database is not empty.")
   }
